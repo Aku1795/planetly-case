@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#Db
+postgres-data
+initial_data/*
+sources.md
