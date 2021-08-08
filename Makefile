@@ -2,14 +2,16 @@ USERNAME=postgres
 ACCOUNT_NAME= is24-object
 ENVIRONMENT=dev
 TIMESHIFT=0
-#cp "./initial_data/GlobalLandTemperaturesByCity.csv" "./postgres-data/GlobalLandTemperaturesByCity.csv"
 
-docker:
+load-csv-into-db:
+	docker exec --workdir=/repo planetly-case_postgres_1 psql --host=localhost --username=postgres --file=init_load.sql
+
+project-up:
 	docker compose up -d
+	load-csv-into-db
 
 project-down:
 	docker compose down
-	rm -Rf postgres-data
 
 connect-to-db:
 	docker exec -it planetly-case_postgres_1 psql -U postgres -d postgres

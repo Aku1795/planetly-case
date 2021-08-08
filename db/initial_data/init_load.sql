@@ -1,0 +1,1 @@
+COPY test FROM '/repo/GlobalLandTemperaturesByCity.csv' CSV HEADER;
