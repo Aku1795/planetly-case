@@ -6,8 +6,7 @@ CREATE TABLE test  (
     Country TEXT,
     Latitude TEXT,
     Longitude TEXT,
-    PRIMARY KEY (dt, City, Country)
+    PRIMARY KEY (dt, City, Country, Latitude, Longitude)
     );
  
---COPY test FROM '/var/lib/postgresql/data/GlobalLandTemperaturesByCity.csv' CSV HEADER;
 

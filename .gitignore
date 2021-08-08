@@ -132,3 +132,4 @@ dmypy.json
 postgres-data
 initial_data/*
 sources.md
+db/initial_data
