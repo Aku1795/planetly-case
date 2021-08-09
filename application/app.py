@@ -10,7 +10,6 @@ from sqlalchemy import desc
 #app
 app = Flask(__name__)
 
-
 #DB connection
 user = os.environ['POSTGRES_USER']
 password = os.environ['POSTGRES_PASSWORD']
