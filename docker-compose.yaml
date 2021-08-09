@@ -17,6 +17,7 @@ services:
       volumes: 
         # copy the sql script to create tables
         - ./db/sql/create_table.sql:/docker-entrypoint-initdb.d/create_table.sql
+        - ./db/sql/init_load.sql:/docker-entrypoint-initdb.d/init_load.sql
         - ./db/initial_data:/repo
     api:
       build: .
