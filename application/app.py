@@ -1,49 +1,27 @@
 import json
+import os
 
-from flask import request
-
-from . import create_app, database
-from .models import Cats
-
-app = create_app()
+from flask import request, Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
-@app.route('/', methods=['GET'])
-def fetch():
-    cats = database.get_all(Cats)
-    all_cats = []
-    for cat in cats:
-        new_cat = {
-            "id": cat.id,
-            "name": cat.name,
-            "price": cat.price,
-            "breed": cat.breed
-        }
+app = Flask(__name__)
 
-        all_cats.append(new_cat)
-    return json.dumps(all_cats), 200
+user = os.environ['POSTGRES_USER']
+password = os.environ['POSTGRES_PASSWORD']
+host = os.environ['POSTGRES_HOST'] 
+database = os.environ['POSTGRES_DB']
+port = os.environ['POSTGRES_PORT']
+
+DATABASE_CONNECTION_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_CONNECTION_URI
 
 
-@app.route('/add', methods=['POST'])
-def add():
-    data = request.get_json()
-    name = data['name']
-    price = data['price']
-    breed = data['breed']
-
-    database.add_instance(Cats, name=name, price=price, breed=breed)
-    return json.dumps("Added"), 200
+@app.route('/')
+def index():
+    return 'Hello world  fkoffkspe'
 
 
-@app.route('/remove/<cat_id>', methods=['DELETE'])
-def remove(cat_id):
-    database.delete_instance(Cats, id=cat_id)
-    return json.dumps("Deleted"), 200
 
-
-@app.route('/edit/<cat_id>', methods=['PATCH'])
-def edit(cat_id):
-    data = request.get_json()
-    new_price = data['price']
-    database.edit_instance(Cats, id=cat_id, price=new_price)
-    return json.dumps("Edited"), 200
+if __name__ == '__main__':
+    app.run(debug= True, host='0.0.0.0')

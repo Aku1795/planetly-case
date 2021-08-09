@@ -6,7 +6,7 @@ CREATE TABLE temperatures_by_time_and_city  (
     country TEXT,
     latitude TEXT,
     longitude TEXT,
-    PRIMARY KEY (dt, City, Country, Latitude, Longitude)
+    PRIMARY KEY (date, City, Country, Latitude, Longitude)
     );
  
 

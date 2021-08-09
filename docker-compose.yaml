@@ -2,18 +2,34 @@
 version: '3.7'
 services:
     postgres:
-        image: postgres
-        restart: always
-        environment:
-          - POSTGRES_USER=postgres
-          - POSTGRES_PASSWORD=postgres
-        logging:
-          options:
-            max-size: 10m
-            max-file: "3"
-        ports:
-          - '5438:5432'
-        volumes: 
-          # copy the sql script to create tables
-          - ./db/sql/create_table.sql:/docker-entrypoint-initdb.d/create_table.sql
-          - ./db/initial_data:/repo
+      image: postgres
+      restart: always
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB = planetly_case
+      logging:
+        options:
+          max-size: 10m
+          max-file: "3"
+      ports:
+        - '5432:5432'
+      volumes: 
+        # copy the sql script to create tables
+        - ./db/sql/create_table.sql:/docker-entrypoint-initdb.d/create_table.sql
+        - ./db/initial_data:/repo
+    api:
+      build: .
+      restart: always
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_PORT=5432
+        - POSTGRES_DB=planetly_case
+        - POSTGRES_HOST=postgres
+      volumes:
+        - ./application:/usr/src/app/
+      ports:
+        - '5000:5000'
+
+
