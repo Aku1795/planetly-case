@@ -5,8 +5,9 @@ import datetime as dt
 from flask import request, Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.automap import automap_base
+from sqlalchemy import desc
 
-#ap
+#app
 app = Flask(__name__)
 
 
@@ -32,16 +33,13 @@ TemperaturesByCity = Base.classes.temperatures_by_time_and_city
 #Routes
 @app.route('/')
 def index():
-    results = db.session.query(TemperaturesByCity).limit(5).all()
-    for r in results:
-        print(r.date)
     return 'Hello world  fkoffkspe'
 
 @app.route('/add_city', methods=['POST'])
 def add_city():
 
     data = request.get_json()
-    date = data["date"]
+    date = dt.datetime.strptime(data["date"], "%Y-%m-%d")
     avg_temperature = data["avg_temperature"]
     avg_temperature_uncertainty = data["avg_temperature_uncertainty"]
     city = data["city"]
@@ -58,7 +56,7 @@ def add_city():
         ,latitude= latitude
         ,longitude= longitude
     )
-    db.sesssion.add(new_city)
+    db.session.add(new_city)
     db.session.commit()
 
     return f"{city} added"
@@ -67,27 +65,28 @@ def add_city():
 def modify_city():
 
     data = request.get_json()
-    date = dt.strptime(data["date"], "%Y-%m-%d")
-    avg_temperature = data["avg_temperature"]
-    avg_temperature_uncertainty = data["avg_temperature_uncertainty"]
+    date = dt.datetime.strptime(data["date"], "%Y-%m-%d")
+    avg_temperature = data.get("avg_temperature")
+    avg_temperature_uncertainty = data.get("avg_temperature_uncertainty")
     city = data["city"]
     country = data["country"]
-    latitude = data["latitude"]
-    longitude = data["longitude"]
 
-    new_city = TemperaturesByCity(
-        date=date
-        ,avg_temperature= avg_temperature
-        ,avg_temperature_uncertainty= avg_temperature_uncertainty
-        ,city= city
-        ,country= country
-        ,latitude= latitude
-        ,longitude= longitude
-    )
-    db.sesssion.add(new_city)
+
+    query = db.session\
+        .query(TemperaturesByCity)\
+        .filter(TemperaturesByCity.date==date)\
+        .filter(TemperaturesByCity.city==city)\
+        .filter(TemperaturesByCity.country==country)
+
+    if avg_temperature is not None:
+        query.update({TemperaturesByCity.avg_temperature: avg_temperature})
+    
+    if avg_temperature_uncertainty is not None:
+        query.update({TemperaturesByCity.avg_temperature_uncertainty: avg_temperature_uncertainty})
+        
     db.session.commit()
 
-    return f"{city} added"
+    return f"{city} modified"
 
 @app.route('/fetch_top_cities', methods=['POST'])    
 def fetch_top_cities():
@@ -101,9 +100,10 @@ def fetch_top_cities():
 
     query = db.session\
         .query(TemperaturesByCity)\
+        .filter(TemperaturesByCity.avg_temperature != None)\
         .filter(TemperaturesByCity.date>=start_date)\
         .filter(TemperaturesByCity.date<=end_date)\
-        .order_by(TemperaturesByCity.avg_temperature)\
+        .order_by(desc(TemperaturesByCity.avg_temperature))\
         .limit(int(n_rows))\
         .all()
     
@@ -119,7 +119,7 @@ def fetch_top_cities():
         ,"longitude": result.longitude
         }
         results.append(new_row)
-        
+
     return json.dumps(results)
 
 
