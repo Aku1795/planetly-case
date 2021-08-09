@@ -1,1 +1,0 @@
-COPY temperatures_by_time_and_city FROM '/repo/GlobalLandTemperaturesByCity.csv' CSV HEADER;

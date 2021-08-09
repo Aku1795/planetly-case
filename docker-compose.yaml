@@ -2,12 +2,13 @@
 version: '3.7'
 services:
     postgres:
+      container_name: postgres
       image: postgres
       restart: always
       environment:
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=postgres
-        - POSTGRES_DB = planetly_case
+        - POSTGRES_DB=planetly_case
       logging:
         options:
           max-size: 10m
@@ -32,5 +33,7 @@ services:
         - ./application:/usr/src/app/
       ports:
         - '5000:5000'
+      depends_on:
+        - "postgres"
 
 
