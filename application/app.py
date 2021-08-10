@@ -32,7 +32,7 @@ TemperaturesByCity = Base.classes.temperatures_by_time_and_city
 #Routes
 @app.route('/')
 def index():
-    return 'Hello world  fkoffkspe'
+    return 'Hello world'
 
 @app.route('/add_city', methods=['POST'])
 def add_city():
